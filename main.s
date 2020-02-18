@@ -44,6 +44,7 @@ SYSCTL_RCGCGPIO_R  EQU 0x400FE608
 
 CYCLE_TIME EQU 8000000
 
+
        IMPORT  TExaS_Init
        THUMB
        AREA    DATA, ALIGN=2
@@ -86,17 +87,9 @@ Start
      CPSIE  I    ; TExaS voltmeter, scope runs on interrupts
 loop  
 ; main engine goes here
-    BL delay
-
-    LDR R3, =GPIO_PORTE_DATA_R
-    MOV R4, #4
-    STR R4, [R3]
-
-    BL delay
-    LDR R3, =GPIO_PORTE_DATA_R
-    MOV R4, #0
-    STR R4, [R3]
-
+    
+    LDR R0, =2000000
+    BL run_cycle
      B    loop
 
 ; R0 has delay
@@ -108,10 +101,23 @@ wait
 
 ; R0 has "on" time
 run_cycle
-    LDR R3, =CYCLE_TIME
-    SUB R4, R0, R3
+    PUSH {R3, R4, R5, LR}
 
-      
+    LDR R3, =CYCLE_TIME
+    SUB R4, R3, R0      ; R4 is "off" time
+    
+    LDR R3, =GPIO_PORTE_DATA_R  ; ON
+    MOV R5, #4
+    STR R5, [R3]
+    BL wait
+                       
+    LDR R3, =GPIO_PORTE_DATA_R  ; OFF
+    STR R4, [R3]
+    MOV R0, R4
+    BL wait    
+    
+    POP {LR, R5, R4, R3}
+    BX LR
      ALIGN      ; make sure the end of this section is aligned
      END        ; end of file
 

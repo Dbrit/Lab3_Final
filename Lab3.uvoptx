@@ -191,7 +191,7 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>84</LineNumber>
+          <LineNumber>87</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>706</Address>
           <ByteObject>0</ByteObject>
@@ -202,7 +202,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\main.s</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Lab3\main.s\84</Expression>
+          <Expression>\\Lab3\main.s\87</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
