@@ -198,19 +198,20 @@ buttonPressed2
     STR R5, [R4]
     LDR R7, =16000
     LDR R6, =1000
-    PUSH {R6, R4, R5, LR}
     BL breathe
-    POP {R6,R4,R5,LR}
     POP {R4, R5, R7, LR}
     BX LR
 
 breathe
+    PUSH {R6, R4, R5, LR}
+breatheAgain
     MOV R0, R7
     LDR R4, =GPIO_PORTF_DATA_R
     LDR R5, [R4]
     AND R5, #1<<4
     CMP R5, #1
     BLO keepBreathing
+    POP {R6,R4,R5,LR}
     BX LR
 keepBreathing
     ADD R7, R7, R6
@@ -220,13 +221,13 @@ keepBreathing
     PUSH {LR, R11}
     BL run_cycle_100Hz
     POP {LR, R11}
-    B breathe
+    B breatheAgain
 reset1
     LDR R7, =16000
     PUSH {LR, R11}
     BL run_cycle_100Hz
     POP {LR, R11}
-    B breathe
+    B breatheAgain
 
 ; R0 has "on" time
 run_cycle_100Hz

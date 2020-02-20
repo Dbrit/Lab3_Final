@@ -287,67 +287,68 @@ ARM Macro Assembler    Page 5
   198 00000108 6025            STR              R5, [R4]
   199 0000010A F44F 577A       LDR              R7, =16000
   200 0000010E F44F 767A       LDR              R6, =1000
-  201 00000112 B570            PUSH             {R6, R4, R5, LR}
-  202 00000114 F000 F805       BL               breathe
-  203 00000118 E8BD 4070       POP              {R6,R4,R5,LR}
-  204 0000011C E8BD 40B0       POP              {R4, R5, R7, LR}
-  205 00000120 4770            BX               LR
-  206 00000122         
-  207 00000122         breathe
-  208 00000122 4638            MOV              R0, R7
-  209 00000124 4C25            LDR              R4, =GPIO_PORTF_DATA_R
-  210 00000126 6825            LDR              R5, [R4]
-  211 00000128 F005 0510       AND              R5, #1<<4
-  212 0000012C 2D01            CMP              R5, #1
-  213 0000012E D300            BLO              keepBreathing
-  214 00000130 4770            BX               LR
-  215 00000132         keepBreathing
-  216 00000132 4437            ADD              R7, R7, R6
-  217 00000134 4C22            LDR              R4, =160000
-  218 00000136 42A7            CMP              R7, R4
-  219 00000138 D806            BHI              reset1
-  220 0000013A E92D 4800       PUSH             {LR, R11}
-  221 0000013E F000 F80C       BL               run_cycle_100Hz
-  222 00000142 E8BD 4800       POP              {LR, R11}
-  223 00000146 E7EC            B                breathe
-  224 00000148         reset1
-  225 00000148 F44F 577A       LDR              R7, =16000
-  226 0000014C E92D 4800       PUSH             {LR, R11}
-  227 00000150 F000 F803       BL               run_cycle_100Hz
-  228 00000154 E8BD 4800       POP              {LR, R11}
-  229 00000158 E7E3            B                breathe
-  230 0000015A         
-  231 0000015A         ; R0 has "on" time
-  232 0000015A         run_cycle_100Hz
-  233 0000015A B570            PUSH             {LR, R5, R4, R6}
-  234 0000015C 4E18            LDR              R6, =CYCLE_TIME_100Hz
-  235 0000015E EBA6 0400       SUB              R4, R6, R0  ; R4 is "off" time
-  236 00000162         
+  201 00000112 F000 F803       BL               breathe
+  202 00000116 E8BD 40B0       POP              {R4, R5, R7, LR}
+  203 0000011A 4770            BX               LR
+  204 0000011C         
+  205 0000011C         breathe
+  206 0000011C B570            PUSH             {R6, R4, R5, LR}
+  207 0000011E         breatheAgain
+  208 0000011E 4638            MOV              R0, R7
+  209 00000120 4C26            LDR              R4, =GPIO_PORTF_DATA_R
+  210 00000122 6825            LDR              R5, [R4]
+  211 00000124 F005 0510       AND              R5, #1<<4
+  212 00000128 2D01            CMP              R5, #1
+  213 0000012A D302            BLO              keepBreathing
+  214 0000012C E8BD 4070       POP              {R6,R4,R5,LR}
+  215 00000130 4770            BX               LR
+  216 00000132         keepBreathing
+  217 00000132 4437            ADD              R7, R7, R6
+  218 00000134 4C22            LDR              R4, =160000
+  219 00000136 42A7            CMP              R7, R4
+  220 00000138 D806            BHI              reset1
+  221 0000013A E92D 4800       PUSH             {LR, R11}
+  222 0000013E F000 F80C       BL               run_cycle_100Hz
+  223 00000142 E8BD 4800       POP              {LR, R11}
+  224 00000146 E7EA            B                breatheAgain
+  225 00000148         reset1
+  226 00000148 F44F 577A       LDR              R7, =16000
+  227 0000014C E92D 4800       PUSH             {LR, R11}
+  228 00000150 F000 F803       BL               run_cycle_100Hz
+  229 00000154 E8BD 4800       POP              {LR, R11}
+  230 00000158 E7E1            B                breatheAgain
+  231 0000015A         
+  232 0000015A         ; R0 has "on" time
+  233 0000015A         run_cycle_100Hz
+  234 0000015A B570            PUSH             {LR, R5, R4, R6}
+  235 0000015C 4E18            LDR              R6, =CYCLE_TIME_100Hz
+  236 0000015E EBA6 0400       SUB              R4, R6, R0  ; R4 is "off" time
 
 
 
 ARM Macro Assembler    Page 6 
 
 
-  237 00000162 4E12            LDR              R6, =GPIO_PORTE_DATA_R ; ON
-  238 00000164 F04F 0504       MOV              R5, #4
-  239 00000168 6035            STR              R5, [R6]
-  240 0000016A F7FF FFA8       BL               wait
-  241 0000016E         
-  242 0000016E 4E0F            LDR              R6, =GPIO_PORTE_DATA_R ; OFF
-  243 00000170 F04F 0500       MOV              R5, #0
-  244 00000174 6035            STR              R5, [R6]
-  245 00000176 4620            MOV              R0, R4
-  246 00000178 F7FF FFA1       BL               wait
-  247 0000017C         
-  248 0000017C E8BD 4070       POP              {LR, R5, R4, R6}
-  249 00000180 4770            BX               LR
-  250 00000182         
+  237 00000162         
+  238 00000162 4E12            LDR              R6, =GPIO_PORTE_DATA_R ; ON
+  239 00000164 F04F 0504       MOV              R5, #4
+  240 00000168 6035            STR              R5, [R6]
+  241 0000016A F7FF FFA8       BL               wait
+  242 0000016E         
+  243 0000016E 4E0F            LDR              R6, =GPIO_PORTE_DATA_R ; OFF
+  244 00000170 F04F 0500       MOV              R5, #0
+  245 00000174 6035            STR              R5, [R6]
+  246 00000176 4620            MOV              R0, R4
+  247 00000178 F7FF FFA1       BL               wait
+  248 0000017C         
+  249 0000017C E8BD 4070       POP              {LR, R5, R4, R6}
+  250 00000180 4770            BX               LR
   251 00000182         
-  252 00000182 00 00           ALIGN                        ; make sure the end
+  252 00000182         
+  253 00000182 00 00           ALIGN                        ; make sure the end
                                                              of this section is
                                                              aligned
-  253 00000184                 END                          ; end of file
+  254 00000184                 END                          ; end of file
               400FE608 
               40024400 
               4002451C 
@@ -407,15 +408,22 @@ Symbol: Start
    Uses
       At line 58 in file main.s
 Comment: Start used once
-breathe 00000122
+breathe 0000011C
 
 Symbol: breathe
    Definitions
+      At line 205 in file main.s
+   Uses
+      At line 201 in file main.s
+Comment: breathe used once
+breatheAgain 0000011E
+
+Symbol: breatheAgain
+   Definitions
       At line 207 in file main.s
    Uses
-      At line 202 in file main.s
-      At line 223 in file main.s
-      At line 229 in file main.s
+      At line 224 in file main.s
+      At line 230 in file main.s
 
 buttonPressed 00000080
 
@@ -443,6 +451,12 @@ Symbol: checkButton1
 Comment: checkButton1 used once
 checkButton2 000000EE
 
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
 Symbol: checkButton2
    Definitions
       At line 186 in file main.s
@@ -450,12 +464,6 @@ Symbol: checkButton2
       At line 108 in file main.s
 Comment: checkButton2 used once
 incrementDutyCycle 00000096
-
-
-
-ARM Macro Assembler    Page 2 Alphabetic symbol ordering
-Relocatable symbols
-
 
 Symbol: incrementDutyCycle
    Definitions
@@ -467,7 +475,7 @@ keepBreathing 00000132
 
 Symbol: keepBreathing
    Definitions
-      At line 215 in file main.s
+      At line 216 in file main.s
    Uses
       At line 213 in file main.s
 Comment: keepBreathing used once
@@ -499,15 +507,21 @@ reset1 00000148
 
 Symbol: reset1
    Definitions
-      At line 224 in file main.s
+      At line 225 in file main.s
    Uses
-      At line 219 in file main.s
+      At line 220 in file main.s
 Comment: reset1 used once
 run_cycle 000000C6
 
 Symbol: run_cycle
    Definitions
       At line 166 in file main.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
    Uses
       At line 111 in file main.s
 Comment: run_cycle used once
@@ -515,16 +529,10 @@ run_cycle_100Hz 0000015A
 
 Symbol: run_cycle_100Hz
    Definitions
-
-
-
-ARM Macro Assembler    Page 3 Alphabetic symbol ordering
-Relocatable symbols
-
-      At line 232 in file main.s
+      At line 233 in file main.s
    Uses
-      At line 221 in file main.s
-      At line 227 in file main.s
+      At line 222 in file main.s
+      At line 228 in file main.s
 
 wait 000000BE
 
@@ -535,8 +543,8 @@ Symbol: wait
       At line 162 in file main.s
       At line 175 in file main.s
       At line 181 in file main.s
-      At line 240 in file main.s
-      At line 246 in file main.s
+      At line 241 in file main.s
+      At line 247 in file main.s
 
 waitButton1Release 000000AC
 
@@ -546,7 +554,7 @@ Symbol: waitButton1Release
    Uses
       At line 128 in file main.s
 Comment: waitButton1Release used once
-17 symbols
+18 symbols
 
 
 
@@ -567,7 +575,7 @@ Symbol: CYCLE_TIME_100Hz
    Definitions
       At line 46 in file main.s
    Uses
-      At line 234 in file main.s
+      At line 235 in file main.s
 Comment: CYCLE_TIME_100Hz used once
 GPIO_LOCK_KEY 4C4F434B
 
@@ -597,8 +605,8 @@ Symbol: GPIO_PORTE_DATA_R
       At line 172 in file main.s
       At line 177 in file main.s
       At line 196 in file main.s
-      At line 237 in file main.s
-      At line 242 in file main.s
+      At line 238 in file main.s
+      At line 243 in file main.s
 
 GPIO_PORTE_DEN_R 4002451C
 
@@ -709,4 +717,4 @@ Symbol: TExaS_Init
       At line 61 in file main.s
 Comment: TExaS_Init used once
 1 symbol
-370 symbols in table
+371 symbols in table
